@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Workout Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+  --bg:#0f1216;
+  --surface:#171b21;
+  --surface2:#1f242c;
+  --surface3:#2a3038;
+
+  /* BORDERS */
+  --border:rgba(213,184,52,0.25);
+  --border2:rgba(213,184,52,0.45);
+
+  /* HEADINGS */
+  --heading:#d5b834;
+  --heading-bright:#e6cd5a;
+
+  /* TEXT */
+  --text:#e8ecf1;
+  --muted:#a5acb8;
+  --muted2:#7b8391;
+
+  /* TAG COLOURS (unchanged) */
+  --chest:#c0402a;
+  --back:#2a6fa8;
+  --arms:#7040b0;
+  --core:#2a6fa8;
+  --cardio:#a06010;
+  --shoulders:#2a7890;
+
+  /* ACCENTS MATCH HEADING */
+  --accent-bg:rgba(213,184,52,0.10);
+  --accent-border:rgba(213,184,52,0.35);
+
+  --tag-active-bg:rgba(213,184,52,0.18);
+  --tag-active-border:rgba(213,184,52,0.55);
+  --tag-active-text:#d5b834;
+}
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;}
+
+  /* ── HEADER ── */
+  .page-header{
+    background:var(--surface);
+    padding:18px 16px 14px;
+    border-bottom:2px solid var(--border);
+    position:sticky;top:0;z-index:100;
+  }
+  .page-title{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:24px;font-weight:800;
+    color:var(--heading);
+    letter-spacing:0.03em;line-height:1;
+  }
+  .page-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  /* ── DAY NAV ── */
+  .week-nav{
+    display:flex;gap:6px;padding:10px 16px;
+    overflow-x:auto;scrollbar-width:none;
+    border-bottom:1px solid var(--border);
+    background:var(--surface);
+    position:sticky;top:58px;z-index:90;
+  }
+  .week-nav::-webkit-scrollbar{display:none;}
+  .day-btn{
+    flex-shrink:0;background:var(--surface2);
+    border:1px solid var(--border2);border-radius:8px;
+    color:var(--muted);font-family:'Barlow Condensed',sans-serif;
+    font-size:12px;font-weight:700;padding:7px 11px;
+    cursor:pointer;transition:all 0.15s;text-align:center;min-width:62px;
+  }
+  .day-btn .dn{display:block;font-size:15px;}
+  .day-btn .df{display:block;font-size:10px;color:var(--muted2);margin-top:1px;}
+  .day-btn.active{
+    background:var(--tag-active-bg);
+    border-color:var(--tag-active-border);
+    color:var(--heading);
+  }
+  .day-btn.active .df{color:var(--muted);}
+
+  /* ── DAY VIEW ── */
+  .day-view{display:none;padding-bottom:60px;}
+  .day-view.active{display:block;}
+
+  .day-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);background:var(--surface);}
+  .day-tag{
+    display:inline-block;font-family:'Barlow Condensed',sans-serif;
+    font-size:10px;font-weight:700;letter-spacing:0.1em;
+    padding:3px 9px;border-radius:4px;margin-bottom:7px;
+  }
+  .day-heading{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:30px;font-weight:800;line-height:1.05;
+    color:var(--heading);
+  }
+  .day-meta{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.5;}
+  .section-label{
+    font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+    letter-spacing:0.12em;color:var(--muted2);
+    padding:13px 16px 5px;text-transform:uppercase;
+  }
+
+  /* ── CARDIO BLOCK ── */
+  .cardio-block{
+    margin:0 16px 10px;
+    background:var(--accent-bg);
+    border:1px solid var(--accent-border);
+    border-radius:10px;padding:11px 13px;
+    display:flex;gap:11px;align-items:center;
+  }
+  .cardio-icon{
+    width:34px;height:34px;border-radius:7px;
+    background:rgba(160,120,0,0.1);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;font-size:17px;
+  }
+  .cardio-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--heading-bright);}
+  .cardio-detail{font-size:12px;color:var(--muted);margin-top:1px;}
+
+  /* ── EXERCISE CARD ── */
+  .exercise-card{
+    margin:0 16px 10px;
+    background:var(--surface);
+    border:1px solid var(--border2);
+    border-radius:12px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* top row: number, info, weight input, chevron */
+  .ex-top{
+    display:flex;align-items:center;
+    padding:12px 12px 12px 13px;
+    cursor:pointer;gap:10px;
+  }
+  .ex-num{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:22px;font-weight:800;color:var(--surface3);
+    min-width:24px;line-height:1;flex-shrink:0;
+  }
+  .ex-info{flex:1;min-width:0;}
+  .ex-name{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:16px;font-weight:700;color:var(--text);line-height:1.1;
+  }
+  .ex-sets{font-size:12px;color:var(--muted);margin-top:3px;}
+  .ex-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+  .ex-tag{
+    font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;
+    font-family:'Barlow Condensed',sans-serif;letter-spacing:0.04em;
+  }
+  .tag-chest{background:rgba(192,64,42,0.1);color:var(--chest);}
+  .tag-back{background:rgba(42,111,168,0.1);color:var(--back);}
+  .tag-arms{background:rgba(112,64,176,0.1);color:var(--arms);}
+  .tag-core{background:rgba(42,111,168,0.1);color:var(--core);}
+  .tag-cardio{background:rgba(160,96,16,0.1);color:var(--cardio);}
+  .tag-shoulders{background:rgba(42,120,144,0.1);color:var(--shoulders);}
+
+  /* ── WEIGHT INPUT (inline in header) ── */
+  .ex-weight-wrap{
+    display:flex;flex-direction:column;align-items:center;
+    gap:3px;flex-shrink:0;
+  }
+  .ex-weight-label{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:9px;font-weight:700;letter-spacing:0.08em;
+    color:var(--muted2);text-transform:uppercase;
+  }
+  .ex-weight-input{
+    width:68px;background:var(--surface2);
+    border:1px solid var(--border2);
+    color:var(--text);border-radius:7px;
+    padding:6px 8px;font-family:'Barlow',sans-serif;
+    font-size:14px;font-weight:600;
+    text-align:center;outline:none;
+    transition:border-color 0.15s;
+  }
+  .ex-weight-input:focus{border-color:var(--heading-bright);}
+  .ex-weight-input::placeholder{color:var(--muted2);font-weight:400;font-size:12px;}
+
+  /* ── CHEVRON ── */
+  .ex-arrow{
+    width:22px;height:22px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform 0.2s;
+  }
+  .ex-arrow svg{width:13px;height:13px;}
+  .ex-arrow.open{transform:rotate(180deg);}
+  .ex-detail{display:none;}
+  .ex-detail.open{display:block;}
+
+  /* ── IMAGE PLACEHOLDER ── */
+  .ex-illustration{
+    background:var(--surface2);
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+  }
+  .img-placeholder{
+    width:100%;height:155px;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:7px;cursor:pointer;
+  }
+  .img-placeholder svg{opacity:0.2;}
+  .img-placeholder-label{font-size:12px;color:var(--muted2);}
+  .img-placeholder-hint{font-size:10px;color:var(--muted2);opacity:0.7;}
+  .ex-illustration img{width:100%;display:block;max-height:220px;object-fit:cover;}
+  .img-upload-input{display:none;}
+
+  /* ── INSTRUCTIONS ── */
+  .ex-instructions{padding:11px 13px;}
+  .inst-title{
+    font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+    letter-spacing:0.12em;color:var(--muted2);margin-bottom:7px;text-transform:uppercase;
+  }
+  .inst-step{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;}
+  .step-num{
+    background:var(--surface2);color:var(--muted);
+    font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+    min-width:20px;height:20px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:2px;
+  }
+  .step-text{font-size:13px;line-height:1.55;color:var(--text);}
+  .tip-box{
+    background:var(--accent-bg);border:1px solid var(--accent-border);
+    border-radius:8px;padding:9px 11px;margin-top:8px;
+    font-size:12px;color:var(--heading);line-height:1.5;
+  }
+
+  /* ── TRAVEL NOTE ── */
+  .travel-note{
+    margin:8px 16px;
+    background:rgba(42,111,168,0.07);
+    border:1px solid rgba(42,111,168,0.2);
+    border-radius:10px;padding:9px 12px;
+    font-size:12px;color:var(--back);line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">WORKOUT PROGRAM</div>
+  <div class="page-sub">4–5 days/week · run or walk first · then 10–15 min strength</div>
+</div>
+
+<div class="week-nav">
+  <button class="day-btn active" onclick="showDay('mon',this)"><span class="dn">MON</span><span class="df">Chest</span></button>
+  <button class="day-btn" onclick="showDay('tue',this)"><span class="dn">TUE</span><span class="df">Shoulders</span></button>
+  <button class="day-btn" onclick="showDay('wed',this)"><span class="dn">WED</span><span class="df">Back</span></button>
+  <button class="day-btn" onclick="showDay('thu',this)"><span class="dn">THU</span><span class="df">Core</span></button>
+  <button class="day-btn" onclick="showDay('fri',this)"><span class="dn">FRI</span><span class="df">Full Body</span></button>
+</div>
+
+<!-- ══════════ MON ══════════ -->
+<div id="day-mon" class="day-view active">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(192,64,42,0.1);color:var(--chest)">MONDAY</div>
+    <div class="day-heading">Chest &amp; Triceps</div>
+    <div class="day-meta">Run or walk first · then 10–12 min · Barbell + Dumbbells</div>
+  </div>
+  <div class="cardio-block">
+    <div class="cardio-icon">&#127939;</div>
+    <div><div class="cardio-title">Run / Walk First</div><div class="cardio-detail">10 min easy jog or brisk walk · warms up before lifting</div></div>
+  </div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">01</div>
+      <div class="ex-info">
+        <div class="ex-name">Flat Barbell Bench Press</div>
+        <div class="ex-sets">3 sets × 8–10 reps · 60 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-chest">CHEST</span><span class="ex-tag tag-arms">TRICEPS</span></div>
+      </div>
+      <div class="ex-weight-wrap">
+        <div class="ex-weight-label">Weight (kg)</div>
+        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+      </div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Lie flat, feet planted. Grip bar slightly wider than shoulder-width. Retract shoulder blades into the bench.</div></div>
+        <div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower slowly (2 sec) to mid-chest, elbows at ~45° from body.</div></div>
+        <div class="inst-step"><div class="step-num">3</div><div class="step-text">Press powerfully back to start. Exhale on the way up.</div></div>
+        <div class="tip-box"><strong>Key tip:</strong> Don't let your lower back arch excessively — keep contact with the bench throughout the set.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">02</div>
+      <div class="ex-info">
+        <div class="ex-name">Incline Dumbbell Press</div>
+        <div class="ex-sets">2 sets × 10–12 reps · 45 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-chest">UPPER CHEST</span></div>
+      </div>
+      <div class="ex-weight-wrap">
+        <div class="ex-weight-label">Weight (kg)</div>
+        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+      </div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Set bench to 30° incline. Sit with dumbbells on knees, lie back. Hold at chest level, palms forward.</div></div>
+        <div class="inst-step"><div class="step-num">2</div><div class="step-text">Press up and slightly inward. Lower slowly, feeling the upper chest stretch at the bottom.</div></div>
+        <div class="tip-box"><strong>Key tip:</strong> 30° hits the upper chest shelf — the area that makes the biggest visual difference as chest fat reduces.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">03</div>
+      <div class="ex-info">
+        <div class="ex-name">Overhead Tricep Extension</div>
+        <div class="ex-sets">2 sets × 12 reps · 45 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-arms">TRICEPS</span></div>
+      </div>
+      <div class="ex-weight-wrap">
+        <div class="ex-weight-label">Weight (kg)</div>
+        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+      </div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Sit upright. Hold one dumbbell with both hands overhead, upper arms vertical close to head.</div></div>
+        <div class="inst-step"><div class="step-num">2</div><div class="step-text">Bend elbows only — lower dumbbell behind head until forearms are parallel to floor. Extend back to start.</div></div>
+        <div class="tip-box"><strong>Key tip:</strong> Keep elbows pointing forward — don't let them flare wide during the movement.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">04</div>
+      <div class="ex-info">
+        <div class="ex-name">Close-Grip Bench Press</div>
+        <div class="ex-sets">2 sets × 10 reps · 60 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-arms">TRICEPS</span><span class="ex-tag tag-chest">CHEST</span></div>
+      </div>
+      <div class="ex-weight-wrap">
+        <div class="ex-weight-label">Weight (kg)</div>
+        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+      </div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Same setup as bench press but hands shoulder-width. Elbows tucked close to sides throughout.</div></div>
+        <div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower to lower chest, press back explosively. Squeeze triceps hard at the top.</div></div>
+        <div class="tip-box"><strong>Key tip:</strong> Use lighter weight than regular bench — this is a finishing move, not a max effort exercise.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TUE ══════════ -->
+<div id="day-tue" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(42,120,144,0.1);color:var(--shoulders)">TUESDAY</div>
+    <div class="day-heading">Shoulders &amp; Arms</div>
+    <div class="day-meta">Run or walk first · then 10–12 min · Dumbbells + Bench</div>
+  </div>
+  <div class="cardio-block"><div class="cardio-icon">&#127939;</div><div><div class="cardio-title">Run / Walk First</div><div class="cardio-detail">10 min · warm up before lifting</div></div></div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">01</div>
+      <div class="ex-info"><div class="ex-name">Standing DB Shoulder Press</div><div class="ex-sets">3 sets × 10–12 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-shoulders">SHOULDERS</span><span class="ex-tag tag-core">CORE</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand feet shoulder-width, soft knees. Dumbbells at shoulder height, palms forward. Core braced.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Press overhead until arms nearly extended. Lower slowly. Keep strict — no leg drive.</div></div><div class="tip-box"><strong>Why standing works better:</strong> More natural shoulder path, reduces impingement risk, and engages core simultaneously.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">02</div>
+      <div class="ex-info"><div class="ex-name">Lateral Dumbbell Raise</div><div class="ex-sets">2 sets × 15 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-shoulders">SIDE DELTS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand with light dumbbells at sides, slight bend in elbows, slight lean forward from hips.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Raise both arms to sides leading with elbows. Stop at shoulder height. Lower slowly — 3 sec down.</div></div><div class="tip-box"><strong>Key tip:</strong> Use lighter weight than you think. Swinging to complete reps means too heavy.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">03</div>
+      <div class="ex-info"><div class="ex-name">Dumbbell Hammer Curl</div><div class="ex-sets">2 sets × 12 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">BRACHIALIS</span><span class="ex-tag tag-arms">FOREARMS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand holding dumbbells at sides, thumbs pointing forward (neutral/hammer grip).</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Curl one dumbbell up, thumb-up position throughout. Don't rotate the wrist. Lower fully then alternate.</div></div><div class="tip-box"><strong>Key tip:</strong> Builds the brachialis — under the bicep, creates arm thickness from all angles.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">04</div>
+      <div class="ex-info"><div class="ex-name">Concentration Curl</div><div class="ex-sets">2 sets × 10 reps each arm · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">BICEP PEAK</span><span class="ex-tag tag-arms">ISOLATION</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Sit on bench, feet wide. Lean forward, rest back of upper arm against inner thigh. Arm fully extended.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Curl up in full arc. At top, rotate wrist so little finger is highest. Lower slowly and fully. Switch arms.</div></div><div class="tip-box"><strong>Why add this:</strong> Highest EMG activation for bicep peak. Pairs with hammer curls for full arm development — thickness AND height.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">05</div>
+      <div class="ex-info"><div class="ex-name">DB Skull Crusher</div><div class="ex-sets">2 sets × 12 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">TRICEPS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Lie on bench, dumbbells above chest, arms vertical, palms facing each other.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Keeping upper arms still, bend elbows to lower dumbbells toward temples. Extend back. Only forearms move.</div></div><div class="tip-box"><strong>Key tip:</strong> Go lighter than expected. Fully isolates triceps — one of the best arm-building exercises.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ WED ══════════ -->
+<div id="day-wed" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(42,111,168,0.1);color:var(--back)">WEDNESDAY</div>
+    <div class="day-heading">Back &amp; Biceps</div>
+    <div class="day-meta">Run or walk first · then 10–12 min · Barbell + Dumbbells</div>
+  </div>
+  <div class="cardio-block"><div class="cardio-icon">&#127939;</div><div><div class="cardio-title">Run / Walk First</div><div class="cardio-detail">10 min · especially important — warms up the back before loading it</div></div></div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">01</div>
+      <div class="ex-info"><div class="ex-name">Barbell Bent-Over Row</div><div class="ex-sets">3 sets × 8–10 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">UPPER BACK</span><span class="ex-tag tag-back">LATS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Hinge forward at hips ~45°. Neutral spine. Overhand grip slightly wider than shoulders.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Pull bar to belly button, elbows driving back. Squeeze shoulder blades at top. Lower under control.</div></div><div class="tip-box"><strong>Key tip for back knots:</strong> Directly strengthens the muscles between your shoulder blades. Consistent rowing is the #1 fix for upper back stiffness.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">02</div>
+      <div class="ex-info"><div class="ex-name">Single-Arm DB Row</div><div class="ex-sets">2 sets × 10 reps each side · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">LATS</span><span class="ex-tag tag-back">RHOMBOIDS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Knee and same-side hand on bench, other foot on floor. Back flat and parallel to ground.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Pull dumbbell up to hip, elbow driving toward ceiling. Lower fully until arm is completely straight.</div></div><div class="tip-box"><strong>Key tip:</strong> Full range of motion at the bottom builds lat thickness and improves posture.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">03</div>
+      <div class="ex-info"><div class="ex-name">Dumbbell Bicep Curl</div><div class="ex-sets">2 sets × 12 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">BICEPS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand, palms forward. Curl up rotating wrist at top so little finger is highest for max contraction.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower slowly — 2 full seconds — until arm is completely straight every rep.</div></div><div class="tip-box"><strong>Key tip:</strong> The slow lowering phase builds more muscle than the curl up. Don't skip it.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">04</div>
+      <div class="ex-info"><div class="ex-name">Bent-Over Rear Delt Raise</div><div class="ex-sets">2 sets × 15 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">REAR DELTS</span><span class="ex-tag tag-back">UPPER BACK</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Hinge forward, torso nearly parallel. Light dumbbells hanging, slight elbow bend.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Raise both arms to sides, squeezing rear delts and between shoulder blades at top. Lower slowly.</div></div><div class="tip-box"><strong>Critical for your goals:</strong> Directly targets muscles that knot from sitting. Will significantly reduce upper back stiffness over 4–6 weeks.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ THU ══════════ -->
+<div id="day-thu" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(42,111,168,0.1);color:var(--back)">THURSDAY · TRAVEL-FRIENDLY</div>
+    <div class="day-heading">Core &amp; Cardio</div>
+    <div class="day-meta">No equipment needed · hotel room friendly · 10–12 min total</div>
+  </div>
+  <div class="travel-note">All floor-based exercises — no dumbbells or bench needed. Perfect for hotel rooms when travelling.</div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">01</div>
+      <div class="ex-info"><div class="ex-name">Plank Hold</div><div class="ex-sets">3 sets × 25–40 sec · 30 sec rest</div><div class="ex-tags"><span class="ex-tag tag-core">CORE</span><span class="ex-tag tag-back">LOWER BACK</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Time (sec)</div><input class="ex-weight-input" type="number" min="0" placeholder="sec" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Forearms on floor, elbows under shoulders, feet on toes. Lift hips to form a straight line. Brace abs, squeeze glutes.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Hold. Breathe normally. If hips drop noticeably, stop — quality over duration.</div></div><div class="tip-box"><strong>Lower back benefit:</strong> Builds deep stabilising muscles that support the lumbar spine — more effective for back pain than crunches.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">02</div>
+      <div class="ex-info"><div class="ex-name">Dead Bug</div><div class="ex-sets">2 sets × 10 reps each side · 30 sec rest</div><div class="ex-tags"><span class="ex-tag tag-core">DEEP CORE</span><span class="ex-tag tag-back">LOWER BACK</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Reps</div><input class="ex-weight-input" type="number" min="0" placeholder="reps" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Lie on back, arms up to ceiling, knees bent 90° in the air. Press lower back into the floor throughout.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Slowly lower opposite arm and leg. Return. Switch sides. If back lifts off the floor — stop and reset.</div></div><div class="tip-box"><strong>Key tip:</strong> 3 sec out, 3 sec back. Retrains deep spinal stabilisers — essential for reducing lower back pain.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">03</div>
+      <div class="ex-info"><div class="ex-name">DB Romanian Deadlift</div><div class="ex-sets">3 sets × 10 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">LOWER BACK</span><span class="ex-tag tag-core">HAMSTRINGS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand holding dumbbells at thighs, soft knee bend. Push hips backwards — let dumbbells slide down thighs.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower until strong hamstring stretch. Drive hips forward to stand. Squeeze glutes at top.</div></div><div class="tip-box"><strong>Lower back pain fix:</strong> Most important exercise for your lower back. Strengthens the entire posterior chain that supports your spine.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">04</div>
+      <div class="ex-info"><div class="ex-name">Mountain Climbers</div><div class="ex-sets">2 sets × 25 sec · 30 sec rest</div><div class="ex-tags"><span class="ex-tag tag-cardio">CARDIO</span><span class="ex-tag tag-core">CORE</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Time (sec)</div><input class="ex-weight-input" type="number" min="0" placeholder="sec" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">High plank on hands, straight line. Drive knees alternately toward chest — like running horizontally.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Keep hips level — don't let them bounce. Move as fast as form allows.</div></div><div class="tip-box"><strong>Key tip:</strong> Fat-burning finisher. 25 seconds all-out significantly elevates heart rate and metabolism.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FRI ══════════ -->
+<div id="day-fri" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(160,96,16,0.1);color:var(--cardio)">FRIDAY · HIGHEST CALORIE BURN</div>
+    <div class="day-heading">Full Body HIIT</div>
+    <div class="day-meta">Run first if possible · 12–15 min · most fat-burning day of the week</div>
+  </div>
+  <div class="cardio-block"><div class="cardio-icon">&#127939;</div><div><div class="cardio-title">Run First</div><div class="cardio-detail">Push the pace today — highest calorie day of the week</div></div></div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">01</div>
+      <div class="ex-info"><div class="ex-name">Dumbbell Thruster</div><div class="ex-sets">3 sets × 10 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-cardio">FULL BODY</span><span class="ex-tag tag-shoulders">SHOULDERS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Hold dumbbells at shoulder height. Squat to parallel keeping dumbbells at shoulders throughout.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">As you drive up from the squat, use that momentum to press dumbbells overhead in one fluid movement.</div></div><div class="tip-box"><strong>Why it works:</strong> Uses almost every muscle simultaneously — one of the highest calorie-burning dumbbell exercises.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">02</div>
+      <div class="ex-info"><div class="ex-name">Renegade Row</div><div class="ex-sets">2 sets × 8 reps each arm · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">BACK</span><span class="ex-tag tag-chest">CHEST</span><span class="ex-tag tag-core">CORE</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Plank on hands gripping dumbbells, feet wide. Brace core hard.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Row one dumbbell to hip, elbow driving up and back. Lower slowly. Row other side. Resist hip rotation.</div></div><div class="tip-box"><strong>Key tip:</strong> Wide feet make this easier. Hits chest, back and core simultaneously — exceptional for short sessions.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">03</div>
+      <div class="ex-info"><div class="ex-name">Push-Up</div><div class="ex-sets">2 sets × 10–15 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-chest">CHEST</span><span class="ex-tag tag-arms">TRICEPS</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Reps</div><input class="ex-weight-input" type="number" min="0" placeholder="reps" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Plank on hands, straight line. Lower chest to floor, elbows at ~45°. Push powerfully back to top.</div></div><div class="tip-box"><strong>Variation:</strong> Wide hands = chest focus. Close hands, elbows tucked = tricep focus. Mix within your sets.</div></div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num">04</div>
+      <div class="ex-info"><div class="ex-name">Dumbbell Deadlift</div><div class="ex-sets">3 sets × 10 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">BACK</span><span class="ex-tag tag-core">CORE</span><span class="ex-tag tag-cardio">FAT BURN</span></div></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions"><div class="inst-title">How to perform</div><div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand with dumbbells at thighs. Hinge at hips, bend knees to lower dumbbells to mid-shin. Back flat, chest up.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Drive through heels, extend hips and knees to stand tall. Squeeze glutes. Lower with control.</div></div><div class="tip-box"><strong>Friday finisher:</strong> Go heavy. Full-body compound movement — highest calorie-burning strength exercise of the week.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showDay(id, btn) {
+  document.querySelectorAll('.day-view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('day-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleEx(topEl) {
+  const card = topEl.parentElement;
+  const detail = card.querySelector('.ex-detail');
+  const arrow = topEl.querySelector('.ex-arrow');
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+function triggerUpload(ph) { ph.nextElementSibling.click(); }
+function loadImage(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wrap = input.parentElement;
+    const ph = wrap.querySelector('.img-placeholder');
+    if (ph) ph.remove();
+    input.remove();
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    wrap.appendChild(img);
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+</script>
+</body>
+</html>
