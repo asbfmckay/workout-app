@@ -648,6 +648,7 @@ function showDay(id, btn) {
   document.getElementById('day-' + id).classList.add('active');
   btn.classList.add('active');
 }
+
 function toggleEx(topEl) {
   const card = topEl.parentElement;
   const detail = card.querySelector('.ex-detail');
@@ -656,21 +657,256 @@ function toggleEx(topEl) {
   detail.classList.toggle('open', !isOpen);
   arrow.classList.toggle('open', !isOpen);
 }
-function triggerUpload(ph) { ph.nextElementSibling.click(); }
-function loadImage(input) {
-  if (!input.files || !input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const wrap = input.parentElement;
-    const ph = wrap.querySelector('.img-placeholder');
-    if (ph) ph.remove();
-    input.remove();
-    const img = document.createElement('img');
-    img.src = e.target.result;
-    wrap.appendChild(img);
-  };
-  reader.readAsDataURL(input.files[0]);
+
+function triggerUpload(ph) {
+  const input = ph.nextElementSibling;
+  if (input) input.click();
 }
+
+async function loadImage(input) {
+  if (!input.files || !input.files[0]) return;
+
+  const file = input.files[0];
+  if (!file.type.startsWith('image/')) return;
+
+  const card = input.closest('.exercise-card');
+  const imageId = getExerciseImageId(card);
+  const dataUrl = await fileToDataUrl(file);
+
+  await saveExerciseImage(imageId, dataUrl);
+  renderExerciseImage(card, dataUrl);
+
+  input.value = '';
+}
+
+function enableWeightPersistence() {
+  const inputs = document.querySelectorAll('.ex-weight-input');
+
+  inputs.forEach((input, index) => {
+    const key = `workout-weight-${index}`;
+    const savedValue = localStorage.getItem(key);
+
+    if (savedValue !== null) {
+      input.value = savedValue;
+    }
+
+    input.addEventListener('input', () => {
+      const value = input.value.trim();
+
+      if (value === '') {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, value);
+      }
+    });
+  });
+}
+
+function enableDragAndDrop() {
+  document.querySelectorAll('.ex-illustration').forEach(wrap => {
+    wrap.addEventListener('dragover', e => {
+      e.preventDefault();
+    });
+
+    wrap.addEventListener('drop', async e => {
+      e.preventDefault();
+
+      const files = e.dataTransfer.files;
+      if (!files || !files[0]) return;
+
+      const file = files[0];
+      if (!file.type.startsWith('image/')) return;
+
+      const card = wrap.closest('.exercise-card');
+      const imageId = getExerciseImageId(card);
+      const dataUrl = await fileToDataUrl(file);
+
+      await saveExerciseImage(imageId, dataUrl);
+      renderExerciseImage(card, dataUrl);
+    });
+  });
+}
+
+function getExerciseImageId(card) {
+  const cards = Array.from(document.querySelectorAll('.exercise-card'));
+  return `exercise-image-${cards.indexOf(card)}`;
+}
+
+function renderExerciseImage(card, dataUrl) {
+  const wrap = card.querySelector('.ex-illustration');
+  if (!wrap) return;
+
+  const placeholder = wrap.querySelector('.img-placeholder');
+  if (placeholder) placeholder.remove();
+
+  let img = wrap.querySelector('img.exercise-saved-image');
+  if (!img) {
+    img = document.createElement('img');
+    img.className = 'exercise-saved-image';
+    wrap.appendChild(img);
+  }
+  img.src = dataUrl;
+
+  let controls = wrap.querySelector('.image-controls');
+  if (!controls) {
+    controls = document.createElement('div');
+    controls.className = 'image-controls';
+    controls.style.padding = '10px 12px';
+    controls.style.display = 'flex';
+    controls.style.gap = '8px';
+    controls.style.flexWrap = 'wrap';
+    controls.style.borderTop = '1px solid var(--border)';
+
+    const replaceBtn = document.createElement('button');
+    replaceBtn.type = 'button';
+    replaceBtn.textContent = 'Replace photo';
+    replaceBtn.style.padding = '8px 10px';
+    replaceBtn.style.borderRadius = '8px';
+    replaceBtn.style.border = '1px solid var(--border2)';
+    replaceBtn.style.background = 'var(--surface2)';
+    replaceBtn.style.color = 'var(--text)';
+    replaceBtn.style.cursor = 'pointer';
+    replaceBtn.addEventListener('click', () => {
+      const input = wrap.querySelector('.img-upload-input');
+      if (input) input.click();
+    });
+
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.textContent = 'Clear photo';
+    clearBtn.style.padding = '8px 10px';
+    clearBtn.style.borderRadius = '8px';
+    clearBtn.style.border = '1px solid var(--border2)';
+    clearBtn.style.background = 'var(--surface2)';
+    clearBtn.style.color = 'var(--text)';
+    clearBtn.style.cursor = 'pointer';
+    clearBtn.addEventListener('click', async () => {
+      const imageId = getExerciseImageId(card);
+      await deleteExerciseImage(imageId);
+      resetExerciseImage(card);
+    });
+
+    controls.appendChild(replaceBtn);
+    controls.appendChild(clearBtn);
+    wrap.appendChild(controls);
+  }
+}
+
+function resetExerciseImage(card) {
+  const wrap = card.querySelector('.ex-illustration');
+  if (!wrap) return;
+
+  const img = wrap.querySelector('img.exercise-saved-image');
+  if (img) img.remove();
+
+  const controls = wrap.querySelector('.image-controls');
+  if (controls) controls.remove();
+
+  const input = wrap.querySelector('.img-upload-input');
+  if (input) {
+    input.value = '';
+    input.style.display = '';
+  }
+
+  if (!wrap.querySelector('.img-placeholder')) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'img-placeholder';
+    placeholder.onclick = function () { triggerUpload(this); };
+    placeholder.innerHTML = `
+      <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+        <rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/>
+        <circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/>
+        <path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      <div class="img-placeholder-label">Tap to add exercise photo</div>
+      <div class="img-placeholder-hint">JPEG or PNG</div>
+    `;
+    wrap.prepend(placeholder);
+  }
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function openExerciseImageDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('WorkoutImageDB', 1);
+
+    request.onupgradeneeded = event => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('exerciseImages')) {
+        db.createObjectStore('exerciseImages');
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveExerciseImage(key, dataUrl) {
+  const db = await openExerciseImageDb();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('exerciseImages', 'readwrite');
+    const store = tx.objectStore('exerciseImages');
+    const request = store.put(dataUrl, key);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function getExerciseImage(key) {
+  const db = await openExerciseImageDb();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('exerciseImages', 'readonly');
+    const store = tx.objectStore('exerciseImages');
+    const request = store.get(key);
+
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function deleteExerciseImage(key) {
+  const db = await openExerciseImageDb();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('exerciseImages', 'readwrite');
+    const store = tx.objectStore('exerciseImages');
+    const request = store.delete(key);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function restoreSavedImages() {
+  const cards = document.querySelectorAll('.exercise-card');
+
+  for (const card of cards) {
+    const imageId = getExerciseImageId(card);
+    const savedImage = await getExerciseImage(imageId);
+
+    if (savedImage) {
+      renderExerciseImage(card, savedImage);
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  enableWeightPersistence();
+  enableDragAndDrop();
+  await restoreSavedImages();
+});
 </script>
 </body>
 </html>
