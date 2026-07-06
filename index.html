@@ -6,54 +6,64 @@
 <title>Workout Program</title>
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
-<meta name="theme-color" content="#f6f8f5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#eeeeec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --green:     #2d8a4e;
-    --green-bg:  #eef8f2;
-    --green-bdr: #b6dfc5;
-    --green-soft:#e4f3ea;
-    --charcoal:  #1a1612;
-    --text-h:    #1a1612;
-    --text-body: #3d3530;
-    --text-dim:  #8f847c;
-    --bg:        #f6f8f5;
+    /* Deep, muted forest green — reserved for accents, not backgrounds */
+    --green:      #1e5c3d;
+    --green-deep: #123122;
+    --green-bg:   #e7e9e6;
+    --green-bdr:  #a9c2ab;
+    --green-soft: #e3e5e1;
+
+    --ink:       #17181a;
+    --text-h:    #17181a;
+    --text-body: #3a3c3a;
+    --text-dim:  #74766f;
+    --bg:        #eeeeec;
     --bg-card:   #ffffff;
-    --bg-soft:   #f1f5f1;
-    --border:    #e4e8e2;
-    --border-md: #d4ddd1;
+    --bg-soft:   #e6e7e3;
+    --border:    #dadbd6;
+    --border-md: #c6c7c0;
 
-    --chest:#b85a4a;
-    --back:#4f7ea3;
-    --arms:#7d63b7;
-    --core:#4b8296;
-    --cardio:#aa7a33;
-    --shoulders:#4b8b72;
+    /* Muscle-group tags: desaturated, industrial */
+    --chest:#8a4534;
+    --back:#31556f;
+    --arms:#544a72;
+    --core:#356268;
+    --cardio:#87611f;
+    --shoulders:#375c47;
 
-    --accent-bg: rgba(45,138,78,0.08);
-    --accent-border: rgba(45,138,78,0.22);
-    --tag-active-bg: rgba(45,138,78,0.12);
-    --tag-active-border: rgba(45,138,78,0.34);
-    --tag-active-text: #2d8a4e;
+    --accent-bg: var(--bg-soft);
+    --accent-border: rgba(30,92,61,0.22);
+    --tag-active-bg: rgba(30,92,61,0.12);
+    --tag-active-border: rgba(30,92,61,0.35);
+    --tag-active-text: #1e5c3d;
+
+    --display: 'Oswald', 'Arial Narrow', sans-serif;
+    --body-f: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--body-f);
     min-height: 100vh;
     background: var(--bg);
     color: var(--text-body);
     -webkit-tap-highlight-color: transparent;
     padding-bottom: 56px;
+    font-variant-numeric: tabular-nums;
   }
 
   .page-header {
     max-width: 520px;
     margin: 0 auto;
-    padding: 44px 20px 18px;
+    padding: 40px 20px 20px;
     text-align: center;
     background: transparent;
     border-bottom: none;
@@ -61,33 +71,37 @@
   }
 
   .home-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 14px;
-    font-size: 28px;
-    background: var(--green-soft);
-    border: 1.5px solid var(--green-bdr);
+    margin: 0 auto 16px;
+    font-size: 24px;
+    background: var(--green-deep);
+    border: none;
+    box-shadow: 0 6px 16px rgba(18,49,34,0.28);
     text-decoration: none;
+    filter: grayscale(0.15);
   }
 
   .page-title {
-    font-size: 28px;
-    line-height: 1.05;
-    letter-spacing: -0.4px;
+    font-family: var(--display);
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: 0.02em;
     font-weight: 700;
     color: var(--text-h);
-    text-transform: none;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-transform: uppercase;
   }
 
-  .page-sub {
-    font-size: 14px;
-    color: var(--text-dim);
-    margin-top: 6px;
+  .page-rule {
+    width: 26px;
+    height: 3px;
+    background: var(--green);
+    margin: 14px auto 0;
+    border-radius: 2px;
   }
 
   .week-nav-wrap {
@@ -99,7 +113,7 @@
 
   .week-nav {
     width: 100%;
-    max-width: 900px;
+    max-width: 488px;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
@@ -109,41 +123,44 @@
 
   .day-btn {
     min-width: 0;
-    padding: 14px 8px;
-    border-radius: 16px;
+    padding: 12px 6px 11px;
+    border-radius: 10px;
     border: 1.5px solid var(--border-md);
-    background: rgba(255,255,255,0.9);
+    background: var(--bg-card);
     color: var(--text-dim);
     cursor: pointer;
     text-align: center;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--body-f);
     transition: all 0.15s ease;
   }
 
   .day-btn .dn {
     display: block;
+    font-family: var(--mono);
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
+    letter-spacing: 0.06em;
+    margin-bottom: 5px;
+    color: var(--ink);
   }
 
   .day-btn .df {
     display: block;
     margin-top: 0;
-    font-size: 11px;
-    line-height: 1.35;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1.3;
     color: var(--text-dim);
     white-space: normal;
   }
 
   .day-btn.active {
-    background: var(--green-bg);
-    border-color: var(--green-bdr);
-    color: var(--green);
+    background: var(--green-deep);
+    border-color: var(--green-deep);
   }
 
-  .day-btn.active .df { color: var(--green); }
+  .day-btn.active .dn { color: #fff; }
+  .day-btn.active .df { color: #b7d0bd; }
 
   .day-view {
     display: none;
@@ -157,56 +174,61 @@
   .day-header {
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 22px;
+    border-left: 5px solid var(--green-deep);
+    border-radius: 12px;
     padding: 18px 18px 16px;
     margin: 0 16px 12px;
-    box-shadow: 0 4px 20px rgba(26,22,18,0.04);
+    box-shadow: 0 4px 16px rgba(20,23,15,0.05);
   }
 
   .day-tag {
     display: inline-block;
+    font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 5px 10px;
-    border-radius: 999px;
-    margin-bottom: 10px;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 4px 9px;
+    border-radius: 5px;
+    margin-bottom: 12px;
   }
 
   .day-heading {
-    font-size: 30px;
-    line-height: 1.05;
-    letter-spacing: -0.5px;
-    font-weight: 700;
+    font-family: var(--display);
+    font-size: 22px;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    font-weight: 600;
     color: var(--text-h);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-transform: uppercase;
   }
 
   .day-meta {
     font-size: 13px;
     line-height: 1.5;
     color: var(--text-dim);
-    margin-top: 8px;
+    margin-top: 9px;
+    padding-top: 9px;
+    border-top: 1px solid var(--border);
   }
 
   .section-label {
-    padding: 14px 20px 8px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    padding: 16px 20px 9px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-dim);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   .cardio-block,
   .travel-note {
     margin: 0 16px 12px;
-    padding: 14px 14px;
-    border-radius: 18px;
+    padding: 13px 14px;
+    border-radius: 10px;
     border: 1.5px solid var(--accent-border);
+    border-left: 4px solid var(--green);
     background: var(--accent-bg);
     display: flex;
     gap: 12px;
@@ -217,42 +239,47 @@
     display: block;
     color: var(--text-body);
     line-height: 1.6;
-    border-color: rgba(75,130,150,0.18);
-    background: rgba(75,130,150,0.08);
+    border-color: rgba(53,98,104,0.2);
+    border-left-color: var(--core);
+    background: rgba(53,98,104,0.07);
   }
 
   .cardio-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
-    background: var(--green-soft);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--green-deep);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    font-size: 18px;
+    font-size: 17px;
+    filter: grayscale(0.2);
   }
 
   .cardio-title {
-    font-size: 15px;
+    font-family: var(--mono);
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--green);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   .cardio-detail {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--text-dim);
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .exercise-card {
     margin: 0 16px 12px;
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 20px;
+    border-left: 4px solid var(--green-deep);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(26,22,18,0.04);
+    box-shadow: 0 4px 16px rgba(20,23,15,0.05);
   }
 
   .ex-top {
@@ -264,28 +291,38 @@
   }
 
   .ex-num {
-    min-width: 30px;
-    font-size: 22px;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
     font-weight: 700;
     line-height: 1;
-    color: #d8e2d7;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-dim);
+    background: var(--bg-soft);
+    border-radius: 7px;
+    flex-shrink: 0;
   }
 
   .ex-info { flex: 1; min-width: 0; }
 
   .ex-name {
-    font-size: 16px;
-    line-height: 1.2;
+    font-size: 15.5px;
+    line-height: 1.25;
     font-weight: 700;
     color: var(--text-h);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--body-f);
   }
 
   .ex-sets {
-    font-size: 12px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
     color: var(--text-dim);
-    margin-top: 4px;
+    margin-top: 5px;
+    letter-spacing: 0.01em;
   }
 
   .ex-tags {
@@ -296,20 +333,20 @@
   }
 
   .ex-tag {
-    font-size: 10px;
+    font-family: var(--mono);
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 999px;
-    letter-spacing: 0.06em;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 4px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
   }
 
-  .tag-chest{background:rgba(184,90,74,0.10);color:var(--chest);}
-  .tag-back{background:rgba(79,126,163,0.10);color:var(--back);}
-  .tag-arms{background:rgba(125,99,183,0.10);color:var(--arms);}
-  .tag-core{background:rgba(75,130,150,0.10);color:var(--core);}
-  .tag-cardio{background:rgba(170,122,51,0.10);color:var(--cardio);}
-  .tag-shoulders{background:rgba(75,139,114,0.10);color:var(--shoulders);}
+  .tag-chest{background:rgba(138,69,52,0.10);color:var(--chest);}
+  .tag-back{background:rgba(49,85,111,0.10);color:var(--back);}
+  .tag-arms{background:rgba(84,74,114,0.10);color:var(--arms);}
+  .tag-core{background:rgba(53,98,104,0.10);color:var(--core);}
+  .tag-cardio{background:rgba(135,97,31,0.10);color:var(--cardio);}
+  .tag-shoulders{background:rgba(55,92,71,0.10);color:var(--shoulders);}
 
   .ex-weight-wrap {
     display: flex;
@@ -320,27 +357,27 @@
   }
 
   .ex-weight-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-dim);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   .ex-weight-input {
     width: 72px;
     background: var(--bg-soft);
     border: 1px solid var(--border-md);
-    border-radius: 10px;
+    border-radius: 7px;
     padding: 8px 8px;
     text-align: center;
     outline: none;
+    font-family: var(--mono);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-h);
     transition: border-color 0.15s ease, background 0.15s ease;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   .ex-weight-input:focus {
@@ -401,13 +438,13 @@
   .ex-instructions { padding: 14px 14px 16px; }
 
   .inst-title {
+    font-family: var(--mono);
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-dim);
-    margin-bottom: 9px;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin-bottom: 10px;
   }
 
   .inst-step {
@@ -418,20 +455,20 @@
   }
 
   .step-num {
-    min-width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--bg-soft);
-    border: 1px solid var(--border);
+    min-width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: var(--green-deep);
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-family: var(--mono);
+    font-size: 10.5px;
     font-weight: 700;
-    color: var(--text-dim);
+    color: #fff;
     flex-shrink: 0;
     margin-top: 1px;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   .step-text {
@@ -443,8 +480,9 @@
   .tip-box {
     margin-top: 10px;
     padding: 11px 12px;
-    border-radius: 14px;
+    border-radius: 8px;
     border: 1.5px solid var(--accent-border);
+    border-left: 3px solid var(--green);
     background: var(--accent-bg);
     font-size: 12px;
     line-height: 1.6;
@@ -452,19 +490,430 @@
   }
 
   .image-controls button {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-family: var(--body-f) !important;
   }
 
   @media (hover: hover) {
     .day-btn:hover {
-      border-color: var(--green-bdr);
+      border-color: var(--green-deep);
       transform: translateY(-1px);
     }
 
     .exercise-card:hover {
       border-color: var(--border-md);
-      box-shadow: 0 6px 24px rgba(26,22,18,0.06);
+      box-shadow: 0 6px 20px rgba(20,23,15,0.08);
     }
+  }
+
+  /* ══════════ Page-level nav (Training / Nutrition / Health) ══════════ */
+  .page-nav-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 16px 18px;
+  }
+
+  .page-nav {
+    width: 100%;
+    max-width: 488px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 4px;
+  }
+
+  .page-btn {
+    padding: 9px 4px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .page-btn.active {
+    background: var(--green-deep);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(18,49,34,0.3);
+  }
+
+  .page-section { display: none; max-width: 520px; margin: 0 auto; padding-bottom: 40px; }
+  .page-section.active { display: block; }
+
+  /* ══════════ Shared tracker card ══════════ */
+  .tracker-card {
+    margin: 0 16px 12px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--green-deep);
+    border-radius: 12px;
+    padding: 16px 16px 18px;
+    box-shadow: 0 4px 16px rgba(20,23,15,0.05);
+  }
+
+  .tracker-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .tracker-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-h);
+  }
+
+  .tracker-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .tracker-stat {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--green);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .tracker-stat small {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  .tracker-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .tracker-row:first-child { border-top: none; padding-top: 0; }
+
+  .tracker-row-label .tracker-title { font-size: 14px; }
+  .tracker-row-label .tracker-sub { font-size: 11.5px; }
+
+  .tracker-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .tracker-controls input[type="range"] { flex: 1; accent-color: var(--green-deep); }
+
+  .mini-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .ghost-btn {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-md);
+    color: var(--text-body);
+    font-family: var(--body-f);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 7px 11px;
+    border-radius: 7px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .solid-btn {
+    background: var(--green-deep);
+    border: none;
+    color: #fff;
+    font-family: var(--body-f);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .solid-btn:active { opacity: 0.85; }
+
+  /* ══════════ Week grid (7 boxes, Mon–Sun) ══════════ */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .week-cell {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-md);
+    background: var(--bg-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+
+  .week-cell .wc-d {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+  }
+
+  .week-cell .wc-mark { font-size: 13px; line-height: 1; color: transparent; }
+
+  .week-cell.on {
+    background: var(--green-deep);
+    border-color: var(--green-deep);
+  }
+
+  .week-cell.on .wc-d { color: #b7d0bd; }
+  .week-cell.on .wc-mark { color: #fff; }
+
+  /* ══════════ Counter (+/-) ══════════ */
+  .counter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .counter button {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border-md);
+    background: var(--bg-soft);
+    color: var(--text-h);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .counter span {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-h);
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ══════════ Checklist rows ══════════ */
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .check-row:first-child { border-top: none; padding-top: 0; }
+
+  .check-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    accent-color: var(--green-deep);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .check-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+  }
+
+  .check-row label strong {
+    font-size: 13.5px;
+    color: var(--text-h);
+    font-weight: 700;
+  }
+
+  .check-row label span {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ══════════ Log form (results, mood) ══════════ */
+  .log-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .log-field { flex: 1; min-width: 90px; }
+
+  .log-field input,
+  .log-field textarea {
+    width: 100%;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-md);
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-h);
+    outline: none;
+    resize: vertical;
+  }
+
+  .log-field textarea { font-family: var(--body-f); font-weight: 400; font-size: 13px; }
+
+  .log-field input::placeholder,
+  .log-field textarea::placeholder { color: #9aa094; font-weight: 500; }
+
+  .log-form .solid-btn { flex-shrink: 0; }
+
+  .log-list { margin-top: 14px; }
+
+  .log-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+
+  .log-entry:first-child { border-top: none; }
+
+  .log-entry .le-date {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .log-entry .le-val {
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--text-h);
+  }
+
+  .log-entry .le-del {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+
+  .log-empty {
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 6px 0;
+    font-style: italic;
+  }
+
+  /* ══════════ Check-ups ══════════ */
+  .checkup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .checkup-row:first-child { border-top: none; padding-top: 0; }
+
+  .checkup-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-h);
+  }
+
+  .checkup-freq {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .checkup-right { text-align: right; flex-shrink: 0; }
+
+  .checkup-status {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-bottom: 6px;
+  }
+
+  .status-ok { background: rgba(30,92,61,0.12); color: var(--green); }
+  .status-soon { background: rgba(135,97,31,0.14); color: var(--cardio); }
+  .status-due { background: rgba(138,69,52,0.14); color: var(--chest); }
+
+  .checkup-date-input {
+    display: block;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-md);
+    border-radius: 7px;
+    padding: 6px 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-h);
+    outline: none;
+  }
+
+  /* ══════════ Mood ══════════ */
+  .mood-picker {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  .mood-btn {
+    padding: 10px 0;
+    border-radius: 9px;
+    border: 1.5px solid var(--border-md);
+    background: var(--bg-soft);
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .mood-btn.selected {
+    background: var(--green-deep);
+    border-color: var(--green-deep);
   }
 </style>
 
@@ -473,9 +922,19 @@
 
 <div class="page-header">
   <a href="https://asbfmckay.github.io/home" class="home-icon">💪</a>
-  <div class="page-title">WORKOUT PROGRAM</div>
-  <div class="page-sub">4–5 days/week · run or walk first · then 10–15 min strength</div>
+  <div class="page-title">Health &amp; Fitness</div>
+  <div class="page-rule"></div>
 </div>
+
+<div class="page-nav-wrap">
+  <div class="page-nav">
+    <button class="page-btn active" onclick="showPage('training',this)">Training</button>
+    <button class="page-btn" onclick="showPage('nutrition',this)">Nutrition</button>
+    <button class="page-btn" onclick="showPage('health',this)">Health</button>
+  </div>
+</div>
+
+<div id="page-training" class="page-section active">
 
 <div class="week-nav-wrap">
   <div class="week-nav">
@@ -490,7 +949,7 @@
 <!-- ══════════ MON ══════════ -->
 <div id="day-mon" class="day-view active">
   <div class="day-header">
-    <div class="day-tag" style="background:rgba(192,64,42,0.1);color:var(--chest)">MONDAY</div>
+    <div class="day-tag" style="background:rgba(138,69,52,0.12);color:var(--chest)">MONDAY</div>
     <div class="day-heading">Chest &amp; Triceps</div>
     <div class="day-meta">Run or walk first · then 10–12 min · Barbell + Dumbbells</div>
   </div>
@@ -605,7 +1064,7 @@
 <!-- ══════════ TUE ══════════ -->
 <div id="day-tue" class="day-view">
   <div class="day-header">
-    <div class="day-tag" style="background:rgba(42,120,144,0.1);color:var(--shoulders)">TUESDAY</div>
+    <div class="day-tag" style="background:rgba(55,92,71,0.12);color:var(--shoulders)">TUESDAY</div>
     <div class="day-heading">Shoulders &amp; Arms</div>
     <div class="day-meta">Run or walk first · then 10–12 min · Dumbbells + Bench</div>
   </div>
@@ -681,7 +1140,7 @@
 <!-- ══════════ WED ══════════ -->
 <div id="day-wed" class="day-view">
   <div class="day-header">
-    <div class="day-tag" style="background:rgba(42,111,168,0.1);color:var(--back)">WEDNESDAY</div>
+    <div class="day-tag" style="background:rgba(49,85,111,0.12);color:var(--back)">WEDNESDAY</div>
     <div class="day-heading">Back &amp; Biceps</div>
     <div class="day-meta">Run or walk first · then 10–12 min · Barbell + Dumbbells</div>
   </div>
@@ -744,7 +1203,7 @@
 <!-- ══════════ THU ══════════ -->
 <div id="day-thu" class="day-view">
   <div class="day-header">
-    <div class="day-tag" style="background:rgba(42,111,168,0.1);color:var(--back)">THURSDAY · TRAVEL-FRIENDLY</div>
+    <div class="day-tag" style="background:rgba(49,85,111,0.12);color:var(--back)">THURSDAY · TRAVEL-FRIENDLY</div>
     <div class="day-heading">Core &amp; Cardio</div>
     <div class="day-meta">No equipment needed · hotel room friendly · 10–12 min total</div>
   </div>
@@ -807,7 +1266,7 @@
 <!-- ══════════ FRI ══════════ -->
 <div id="day-fri" class="day-view">
   <div class="day-header">
-    <div class="day-tag" style="background:rgba(160,96,16,0.1);color:var(--cardio)">FRIDAY · HIGHEST CALORIE BURN</div>
+    <div class="day-tag" style="background:rgba(135,97,31,0.12);color:var(--cardio)">FRIDAY · HIGHEST CALORIE BURN</div>
     <div class="day-heading">Full Body HIIT</div>
     <div class="day-meta">Run first if possible · 12–15 min · most fat-burning day of the week</div>
   </div>
@@ -866,6 +1325,143 @@
     </div>
   </div>
 </div>
+<!-- ══════════ END TRAINING DAYS ══════════ -->
+</div><!-- /page-training -->
+
+<!-- ══════════════════════════════════════════════════════
+     5.1 NUTRITION, CARDIO, ALCOHOL-FREE DAYS, RESULTS & ACCOUNTABILITY
+     ══════════════════════════════════════════════════════ -->
+<div id="page-nutrition" class="page-section">
+
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(30,92,61,0.12);color:var(--green)">5.1 · PLAN &amp; RESULTS</div>
+    <div class="day-heading">Nutrition &amp; Cardio</div>
+    <div class="day-meta">Fuel the training, track the alcohol-free days, log the results, and put someone else in the loop.</div>
+  </div>
+
+  <!-- Alcohol-Free Days -->
+  <div class="section-label">This Week — Alcohol-Free Days</div>
+  <div class="tracker-card">
+    <div class="tracker-top">
+      <div>
+        <div class="tracker-title">AFD Tracker</div>
+        <div class="tracker-sub">Target: <span id="afd-target-label">4</span>+ alcohol-free days</div>
+      </div>
+      <div class="tracker-stat"><span id="afd-count">0</span><small>/7</small></div>
+    </div>
+    <div class="week-grid" id="afd-grid"></div>
+    <div class="tracker-controls">
+      <label class="mini-label" for="afd-target">Weekly target</label>
+      <input type="range" id="afd-target" min="0" max="7" value="4" step="1">
+      <button class="ghost-btn" onclick="resetWeek('afd')">Reset week</button>
+    </div>
+  </div>
+
+  <!-- Cardio + Resistance sessions -->
+  <div class="section-label">This Week — Training Sessions</div>
+  <div class="tracker-card">
+    <div class="tracker-row">
+      <div class="tracker-row-label">
+        <div class="tracker-title">Cardio sessions</div>
+        <div class="tracker-sub">Target 4–5 / week · run, walk, bike, swim</div>
+      </div>
+      <div class="counter">
+        <button onclick="adjustCounter('cardio',-1)">−</button>
+        <span id="cardio-count">0</span>
+        <button onclick="adjustCounter('cardio',1)">+</button>
+      </div>
+    </div>
+    <div class="tracker-row">
+      <div class="tracker-row-label">
+        <div class="tracker-title">Resistance sessions</div>
+        <div class="tracker-sub">Target 4–5 / week · see Training tab</div>
+      </div>
+      <div class="counter">
+        <button onclick="adjustCounter('resistance',-1)">−</button>
+        <span id="resistance-count">0</span>
+        <button onclick="adjustCounter('resistance',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily nutrition checklist -->
+  <div class="section-label">Today's Nutrition Checklist</div>
+  <div class="tracker-card">
+    <div class="check-row"><input type="checkbox" id="nut-protein"><label for="nut-protein"><strong>Protein at every meal</strong><span>Aim ~1.6–2g per kg bodyweight, spread across the day</span></label></div>
+    <div class="check-row"><input type="checkbox" id="nut-veg"><label for="nut-veg"><strong>2+ servings of vegetables</strong><span>Fibre, micronutrients, keeps you fuller for longer</span></label></div>
+    <div class="check-row"><input type="checkbox" id="nut-water"><label for="nut-water"><strong>2+ litres of water</strong><span>Before caffeine, before alcohol, before anything else</span></label></div>
+    <div class="check-row"><input type="checkbox" id="nut-processed"><label for="nut-processed"><strong>Minimised ultra-processed food</strong><span>Home-cooked over packaged where possible</span></label></div>
+    <div class="check-row"><input type="checkbox" id="nut-planned"><label for="nut-planned"><strong>Tomorrow's meals planned</strong><span>Decisions made ahead of time beat decisions made hungry</span></label></div>
+  </div>
+
+  <!-- Results tracking -->
+  <div class="section-label">Results Log</div>
+  <div class="tracker-card">
+    <div class="log-form">
+      <div class="log-field">
+        <label class="mini-label">Weight (kg)</label>
+        <input type="number" id="log-weight" step="0.1" placeholder="0.0">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Waist (cm)</label>
+        <input type="number" id="log-waist" step="0.5" placeholder="0.0">
+      </div>
+      <button class="solid-btn" onclick="addResultEntry()">Log today</button>
+    </div>
+    <div id="results-list" class="log-list"></div>
+  </div>
+
+  <!-- Accountability -->
+  <div class="section-label">Accountability</div>
+  <div class="tracker-card">
+    <div class="log-field" style="margin-bottom:12px;">
+      <label class="mini-label">Accountability partner</label>
+      <input type="text" id="accountability-name" placeholder="Name of the person checking in on you">
+    </div>
+    <div class="log-field">
+      <label class="mini-label">This week's check-in note</label>
+      <textarea id="accountability-note" rows="3" placeholder="What will you tell them on your next check-in?"></textarea>
+    </div>
+    <div class="tip-box" style="margin-top:12px;"><strong>Why this works:</strong> Plans you report on to another person get finished far more often than plans you keep to yourself. Book a standing weekly check-in — even five minutes.</div>
+  </div>
+
+</div><!-- /page-nutrition -->
+
+<!-- ══════════════════════════════════════════════════════
+     5.3 PROACTIVE HEALTH & WELLBEING
+     ══════════════════════════════════════════════════════ -->
+<div id="page-health" class="page-section">
+
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(30,92,61,0.12);color:var(--green)">5.3 · PROACTIVE, NOT REACTIVE</div>
+    <div class="day-heading">Health &amp; Wellbeing</div>
+    <div class="day-meta">Catch problems early. Physical and mental health check-ups on the calendar, not just when something feels wrong.</div>
+  </div>
+
+  <div class="section-label">Check-Ups &amp; Assessments</div>
+  <div class="tracker-card">
+    <div id="checkups-list"></div>
+  </div>
+
+  <div class="section-label">Daily Mood &amp; Wellbeing</div>
+  <div class="tracker-card">
+    <div class="mood-picker" id="mood-picker">
+      <button class="mood-btn" data-mood="1">😞</button>
+      <button class="mood-btn" data-mood="2">😕</button>
+      <button class="mood-btn" data-mood="3">😐</button>
+      <button class="mood-btn" data-mood="4">🙂</button>
+      <button class="mood-btn" data-mood="5">😄</button>
+    </div>
+    <div class="log-field" style="margin-top:12px;">
+      <label class="mini-label">Note (optional)</label>
+      <input type="text" id="mood-note" placeholder="Stress, sleep, energy — anything worth flagging">
+    </div>
+    <button class="solid-btn" style="margin-top:10px;" onclick="logMood()">Log today's mood</button>
+    <div id="mood-list" class="log-list" style="margin-top:14px;"></div>
+    <div class="tip-box" style="margin-top:12px;"><strong>Watch the trend, not the day:</strong> One low day is normal. A run of low scores is the signal to talk to someone — a GP, a therapist, or someone you trust.</div>
+  </div>
+
+</div><!-- /page-health -->
 
 <script>
 function showDay(id, btn) {
@@ -873,6 +1469,14 @@ function showDay(id, btn) {
   document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('day-' + id).classList.add('active');
   btn.classList.add('active');
+}
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.page-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function toggleEx(topEl) {
@@ -1132,7 +1736,310 @@ document.addEventListener('DOMContentLoaded', async () => {
   enableWeightPersistence();
   enableDragAndDrop();
   await restoreSavedImages();
+  initTrackers();
 });
+
+/* ══════════════════════════════════════════════════════
+   5.1 / 5.2 / 5.3 — shared date/week helpers
+   ══════════════════════════════════════════════════════ */
+const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getWeekKey(d = new Date()) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = (date.getUTCDay() + 6) % 7; // Mon=0..Sun=6
+  date.setUTCDate(date.getUTCDate() - day + 3);
+  const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
+  const weekNo = 1 + Math.round(((date - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);
+  return `${date.getUTCFullYear()}-W${weekNo}`;
+}
+
+function getWeekDates() {
+  const now = new Date();
+  const day = (now.getDay() + 6) % 7; // Mon=0..Sun=6
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - day);
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    dates.push(d.toISOString().slice(0, 10));
+  }
+  return dates;
+}
+
+function loadJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch { return fallback; }
+}
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function initTrackers() {
+  initAfd();
+  initCounters();
+  initNutritionChecklist();
+  initResultsLog();
+  initAccountability();
+  initCheckups();
+  initMood();
+}
+
+/* ══════════════════════════════════════════════════════
+   5.1a — Alcohol-Free Days
+   ══════════════════════════════════════════════════════ */
+function initAfd() {
+  const target = loadJSON('afd-target', 4);
+  document.getElementById('afd-target').value = target;
+  document.getElementById('afd-target-label').textContent = target;
+  document.getElementById('afd-target').addEventListener('input', e => {
+    const val = parseInt(e.target.value, 10);
+    document.getElementById('afd-target-label').textContent = val;
+    saveJSON('afd-target', val);
+  });
+  renderAfd();
+}
+
+function renderAfd() {
+  const wk = getWeekKey();
+  const state = loadJSON('afd-' + wk, [false, false, false, false, false, false, false]);
+  const grid = document.getElementById('afd-grid');
+  grid.innerHTML = '';
+  state.forEach((on, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'week-cell' + (on ? ' on' : '');
+    cell.innerHTML = `<span class="wc-d">${DAY_LETTERS[i]}</span><span class="wc-mark">✓</span>`;
+    cell.addEventListener('click', () => {
+      state[i] = !state[i];
+      saveJSON('afd-' + wk, state);
+      renderAfd();
+    });
+    grid.appendChild(cell);
+  });
+  document.getElementById('afd-count').textContent = state.filter(Boolean).length;
+}
+
+function resetWeek(type) {
+  const wk = getWeekKey();
+  if (type === 'afd') {
+    saveJSON('afd-' + wk, [false, false, false, false, false, false, false]);
+    renderAfd();
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   5.1b — Cardio / resistance session counters
+   ══════════════════════════════════════════════════════ */
+function initCounters() {
+  ['cardio', 'resistance'].forEach(type => {
+    const wk = getWeekKey();
+    const count = loadJSON(`counter-${type}-${wk}`, 0);
+    document.getElementById(`${type}-count`).textContent = count;
+  });
+}
+
+function adjustCounter(type, delta) {
+  const wk = getWeekKey();
+  const key = `counter-${type}-${wk}`;
+  let count = loadJSON(key, 0);
+  count = Math.max(0, count + delta);
+  saveJSON(key, count);
+  document.getElementById(`${type}-count`).textContent = count;
+}
+
+/* ══════════════════════════════════════════════════════
+   5.1c — Daily nutrition checklist
+   ══════════════════════════════════════════════════════ */
+function initNutritionChecklist() {
+  const ids = ['nut-protein', 'nut-veg', 'nut-water', 'nut-processed', 'nut-planned'];
+  const today = todayKey();
+  ids.forEach(id => {
+    const key = `nutcheck-${today}-${id}`;
+    const box = document.getElementById(id);
+    if (!box) return;
+    box.checked = loadJSON(key, false);
+    box.addEventListener('change', () => saveJSON(key, box.checked));
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   5.1d — Results log (weight / waist)
+   ══════════════════════════════════════════════════════ */
+function initResultsLog() { renderResults(); }
+
+function addResultEntry() {
+  const weightInput = document.getElementById('log-weight');
+  const waistInput = document.getElementById('log-waist');
+  const weight = weightInput.value.trim();
+  const waist = waistInput.value.trim();
+  if (!weight && !waist) return;
+
+  const entries = loadJSON('results-log', []);
+  const today = todayKey();
+  const existingIdx = entries.findIndex(e => e.date === today);
+  const entry = { date: today, weight: weight || null, waist: waist || null };
+  if (existingIdx >= 0) entries[existingIdx] = entry; else entries.push(entry);
+  entries.sort((a, b) => b.date.localeCompare(a.date));
+  saveJSON('results-log', entries);
+
+  weightInput.value = '';
+  waistInput.value = '';
+  renderResults();
+}
+
+function deleteResultEntry(date) {
+  const entries = loadJSON('results-log', []).filter(e => e.date !== date);
+  saveJSON('results-log', entries);
+  renderResults();
+}
+
+function renderResults() {
+  const entries = loadJSON('results-log', []);
+  const list = document.getElementById('results-list');
+  if (!entries.length) {
+    list.innerHTML = '<div class="log-empty">No entries yet — log today\'s weight or waist above.</div>';
+    return;
+  }
+  list.innerHTML = entries.slice(0, 10).map(e => {
+    const parts = [];
+    if (e.weight) parts.push(`${e.weight} kg`);
+    if (e.waist) parts.push(`${e.waist} cm`);
+    return `<div class="log-entry">
+      <span class="le-date">${formatDate(e.date)}</span>
+      <span class="le-val">${parts.join(' · ')}</span>
+      <button class="le-del" onclick="deleteResultEntry('${e.date}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function formatDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+}
+
+/* ══════════════════════════════════════════════════════
+   5.1e — Accountability
+   ══════════════════════════════════════════════════════ */
+function initAccountability() {
+  const nameInput = document.getElementById('accountability-name');
+  const noteInput = document.getElementById('accountability-note');
+  nameInput.value = loadJSON('accountability-name', '');
+  noteInput.value = loadJSON('accountability-note', '');
+  nameInput.addEventListener('input', () => saveJSON('accountability-name', nameInput.value));
+  noteInput.addEventListener('input', () => saveJSON('accountability-note', noteInput.value));
+}
+
+/* ══════════════════════════════════════════════════════
+   5.3a — Check-ups & assessments
+   ══════════════════════════════════════════════════════ */
+const DEFAULT_CHECKUPS = [
+  { id: 'c1', name: 'GP physical / general check-up', months: 12, last: null },
+  { id: 'c2', name: 'Bloodwork (cholesterol, glucose, etc.)', months: 12, last: null },
+  { id: 'c3', name: 'Blood pressure check', months: 6, last: null },
+  { id: 'c4', name: 'Dental check-up', months: 6, last: null },
+  { id: 'c5', name: 'Eye test', months: 24, last: null },
+  { id: 'c6', name: 'Mental health check-in (GP or therapist)', months: 6, last: null },
+  { id: 'c7', name: 'Skin check', months: 12, last: null }
+];
+
+function initCheckups() {
+  if (localStorage.getItem('checkups') === null) {
+    saveJSON('checkups', DEFAULT_CHECKUPS);
+  }
+  renderCheckups();
+}
+
+function checkupStatus(c) {
+  if (!c.last) return { label: 'Due', cls: 'status-due' };
+  const last = new Date(c.last + 'T00:00:00');
+  const next = new Date(last);
+  next.setMonth(next.getMonth() + c.months);
+  const now = new Date();
+  const daysToNext = Math.round((next - now) / 86400000);
+  if (daysToNext < 0) return { label: 'Overdue', cls: 'status-due' };
+  if (daysToNext <= 30) return { label: 'Due soon', cls: 'status-soon' };
+  return { label: 'OK', cls: 'status-ok' };
+}
+
+function renderCheckups() {
+  const checkups = loadJSON('checkups', DEFAULT_CHECKUPS);
+  const container = document.getElementById('checkups-list');
+  container.innerHTML = checkups.map(c => {
+    const status = checkupStatus(c);
+    return `<div class="checkup-row">
+      <div>
+        <div class="checkup-name">${c.name}</div>
+        <div class="checkup-freq">Every ${c.months} months</div>
+      </div>
+      <div class="checkup-right">
+        <span class="checkup-status ${status.cls}">${status.label}</span>
+        <input type="date" class="checkup-date-input" value="${c.last || ''}" onchange="setCheckupDate('${c.id}', this.value)">
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setCheckupDate(id, value) {
+  const checkups = loadJSON('checkups', DEFAULT_CHECKUPS);
+  const c = checkups.find(x => x.id === id);
+  if (c) c.last = value || null;
+  saveJSON('checkups', checkups);
+  renderCheckups();
+}
+
+/* ══════════════════════════════════════════════════════
+   5.3b — Daily mood & wellbeing
+   ══════════════════════════════════════════════════════ */
+let selectedMood = null;
+
+function initMood() {
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedMood = btn.dataset.mood;
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  renderMoodLog();
+}
+
+function logMood() {
+  if (!selectedMood) return;
+  const entries = loadJSON('mood-log', []);
+  const today = todayKey();
+  const note = document.getElementById('mood-note').value.trim();
+  const idx = entries.findIndex(e => e.date === today);
+  const entry = { date: today, mood: selectedMood, note };
+  if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+  entries.sort((a, b) => b.date.localeCompare(a.date));
+  saveJSON('mood-log', entries);
+  document.getElementById('mood-note').value = '';
+  renderMoodLog();
+}
+
+const MOOD_EMOJI = { '1': '😞', '2': '😕', '3': '😐', '4': '🙂', '5': '😄' };
+
+function renderMoodLog() {
+  const entries = loadJSON('mood-log', []);
+  const list = document.getElementById('mood-list');
+  if (!entries.length) {
+    list.innerHTML = '<div class="log-empty">No mood logs yet — pick a face above and log today.</div>';
+    return;
+  }
+  list.innerHTML = entries.slice(0, 10).map(e => `
+    <div class="log-entry">
+      <span class="le-date">${formatDate(e.date)}</span>
+      <span class="le-val">${MOOD_EMOJI[e.mood] || ''} ${e.note ? '— ' + e.note : ''}</span>
+    </div>
+  `).join('');
+}
 </script>
 </body>
 </html>
